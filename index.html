@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo VIH - Herramienta de Repaso Activo</title>
+    <style>
+        :root {
+            --primary-blue: #003366; /* Azul profundo */
+            --accent-gold: #CC9900;  /* Oro */
+            --bg-color: #f4f7f9;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-gold);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        /* Tabs Navigation */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #e0e6ed;
+            justify-content: center;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .tab-btn {
+            background-color: inherit;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 20px;
+            transition: 0.3s;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .tab-btn:hover {
+            background-color: #d1d9e2;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeEffect 0.5s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        h2, h3 {
+            color: var(--primary-blue);
+            margin-top: 0;
+        }
+
+        /* Timeline / Accordion */
+        .accordion-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .accordion-btn:hover, .accordion-btn.active-acc {
+            background-color: var(--accent-gold);
+            color: #000;
+        }
+
+        .accordion-panel {
+            padding: 0 15px;
+            background-color: white;
+            display: none;
+            overflow: hidden;
+            border-left: 2px solid var(--accent-gold);
+            border-right: 2px solid var(--accent-gold);
+            border-bottom: 2px solid var(--accent-gold);
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Interactive Wizard (Flowchart) */
+        .wizard-step {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+        .wizard-step.active-step {
+            display: block;
+        }
+        .wizard-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .wizard-btn:hover { background-color: var(--accent-gold); color: black; }
+        .wizard-result {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #c3e6cb;
+        }
+        .wizard-reset {
+            background: transparent;
+            color: var(--primary-blue);
+            text-decoration: underline;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Quizzes */
+        .quiz-question {
+            margin-bottom: 25px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .quiz-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .quiz-btn:hover:not(:disabled) {
+            background: #e2e6ea;
+        }
+        .quiz-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; font-weight: bold; }
+        .quiz-btn.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .quiz-feedback.show { display: block; }
+        .feedback-correct { background: #d4edda; border-left: 4px solid #28a745; }
+        .feedback-incorrect { background: #f8d7da; border-left: 4px solid #dc3545; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Protocolo Clínico de Infección por VIH</h1>
+</header>
+
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="openTab(event, 'tab-concepto')">Conceptos Base</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-etapas')">Fisiopatología y Etapas</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-algoritmo')">Algoritmo Diagnóstico</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-targa')">Tratamiento (TARGA)</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-casos')">Repaso Activo: Casos Clínicos</button>
+</div>
+
+<!-- CONCEPTOS BASE -->
+<div id="tab-concepto" class="tab-content" style="display: block;">
+    <div class="card">
+        <h2>¿Qué es el VIH?</h2>
+        <p>El virus de la inmunodeficiencia humana (VIH) es un retrovirus de la familia Retroviridae, género lentivirus[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span). Contiene ARN de cadena simple y la enzima transcriptasa reversa[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span). El VIH produce daño severo destruyendo el sistema inmune, debido a su tropismo por los linfocitos T CD4+ y las células de la estirpe macrofágica[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span).</p>
+    </div>
+    <div class="card">
+        <h2>Prevención y Transmisión</h2>
+        <p><strong>Mecanismos de transmisión:</strong> Vía sexual, vía sanguínea o parenteral (compartir jeringas, transfusiones), y transmisión vertical de madre a hijo[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span). El contacto casual (saludar, besar, compartir utensilios) no transmite la enfermedad[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span).</p>
+        <p><strong>Prevención:</strong> Educación en salud sexual y uso de métodos de barrera[span_12](start_span)[span_12](end_span). En mujeres embarazadas, el tratamiento antirretroviral oportuno disminuye notablemente la transmisión intrauterina y perinatal[span_13](start_span)[span_13](end_span)[span_14](start_span)[span_14](end_span).</p>
+    </div>
+</div>
+
+<!-- ETAPAS -->
+<div id="tab-etapas" class="tab-content">
+    <h2>Línea de Tiempo Fisiopatológica</h2>
+    <p><em>Haz clic en cada fase para explorar el daño celular y la carga viral.</em></p>
+    
+    <button class="accordion-btn">Fase 1: Infección Aguda (Primoinfección) <span>+</span></button>
+    <div class="accordion-panel">
+        <p>Aparece entre las 2 y 4 semanas posteriores a la infección[span_15](start_span)[span_15](end_span).</p>
+        <ul>
+            <li><strong>Inmunología:</strong> Se destruyen hasta el 60% de las células T de memoria del tejido linfoide asociado a mucosas (GALT)[span_16](start_span)[span_16](end_span). Aparece el antígeno p24[span_17](start_span)[span_17](end_span).</li>
+            <li><strong>Carga Viral y CD4:</strong> Carga viral extremadamente elevada; caída transitoria de linfocitos T CD4+[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span).</li>
+            <li><strong>Clínica:</strong> Puede ser asintomática o presentar Síndrome Retroviral Agudo (fiebre, faringitis, exantema maculopapular, fatiga, adenopatías)[span_20](start_span)[span_20](end_span)[span_21](start_span)[span_21](end_span).</li>
+        </ul>
+    </div>
+
+    <button class="accordion-btn">Fase 2: Período de Latencia (Crónica) <span>+</span></button>
+    <div class="accordion-panel">
+        <p>Puede durar varios años (mediana de 10 años)[span_22](start_span)[span_22](end_span).</p>
+        <ul>
+            <li><strong>Inmunología:</strong> Replicación continua en tejido linfoide, causando inflamación crónica y activación inmunológica permanente[span_23](start_span)[span_23](end_span)[span_24](start_span)[span_24](end_span)[span_25](start_span)[span_25](end_span)[span_26](start_span)[span_26](end_span).</li>
+            <li><strong>Carga Viral y CD4:</strong> La carga viral desciende a un punto de equilibrio (set-point viral)[span_27](start_span)[span_27](end_span)[span_28](start_span)[span_28](end_span). Los niveles de CD4+ descienden de manera paulatina[span_29](start_span)[span_29](end_span).</li>
+            <li><strong>Clínica:</strong> Generalmente asintomática, o con linfoadenopatía generalizada persistente[span_30](start_span)[span_30](end_span)[span_31](start_span)[span_31](end_span).</li>
+        </ul>
+    </div>
+
+    <button class="accordion-btn">Fase 3: Síndrome de Inmunodeficiencia Adquirida (sida) <span>+</span></button>
+    <div class="accordion-panel">
+        <ul>
+            <li><strong>Carga Viral y CD4:</strong> Conteo de linfocitos T CD4+ igual o menor a 200 células/µl (<14%); aumento descontrolado de la carga viral[span_32](start_span)[span_32](end_span)[span_33](start_span)[span_33](end_span).</li>
+            <li><strong>Complicaciones:</strong> Caquexia, encefalopatía, neoplasias (sarcoma de Kaposi, linfomas)[span_34](start_span)[span_34](end_span)[span_35](start_span)[span_35](end_span)[span_36](start_span)[span_36](end_span).</li>
+            <li><strong>Infecciones Oportunistas:</strong> Neumonía por <em>Pneumocystis jirovecii</em>, toxoplasmosis cerebral, candidiasis, infección por MAC y citomegalovirus[span_37](start_span)[span_37](end_span)[span_38](start_span)[span_38](end_span).</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ALGORITMO -->
+<div id="tab-algoritmo" class="tab-content">
+    <h2>Asistente de Laboratorio: Algoritmo Diagnóstico</h2>
+    <p>Simulador interactivo para el procesamiento de muestras de suero o plasma[span_39](start_span)[span_39](end_span).</p>
+
+    <!-- Paso 1 -->
+    <div id="wiz-step-1" class="wizard-step active-step">
+        <h3>Inmunoensayo para VIH-1/2 antígeno/anticuerpo[span_40](start_span)[span_40](end_span)</h3>
+        <p>¿Cuál es el resultado de la prueba inicial?</p>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-neg')">Resultado (-)</button>
+        <button class="wizard-btn" onclick="nextWizard('wiz-step-2')">Resultado (+)</button>
+    </div>
+
+    <!-- Resultado Negativo Inicial -->
+    <div id="wiz-res-neg" class="wizard-step">
+        <div class="wizard-result">Diagnóstico final: Negativo para anticuerpos VIH-1 y VIH-2 y antígeno p24[span_41](start_span)[span_41](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+
+    <!-- Paso 2 -->
+    <div id="wiz-step-2" class="wizard-step">
+        <h3>Inmunoensayo de diferenciación de anticuerpos VIH-1/VIH-2[span_42](start_span)[span_42](end_span)</h3>
+        <p>Selecciona el patrón de detección obtenido:</p>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-1')">VIH-1 (+) / VIH-2 (-)</button>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-2')">VIH-1 (-) / VIH-2 (+)</button>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-ambos')">VIH-1 (+) / VIH-2 (+)</button>
+        <button class="wizard-btn" onclick="nextWizard('wiz-step-3')" style="background-color: var(--accent-gold); color: black;">VIH-1 (-) o indeterminado y VIH-2 (-) o indeterminado</button>
+    </div>
+
+    <!-- Resultados Diferenciación -->
+    <div id="wiz-res-1" class="wizard-step">
+        <div class="wizard-result">Detección de anticuerpos VIH-1 confirmada[span_43](start_span)[span_43](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+    <div id="wiz-res-2" class="wizard-step">
+        <div class="wizard-result">Detección de anticuerpos VIH-2 confirmada[span_44](start_span)[span_44](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+    <div id="wiz-res-ambos" class="wizard-step">
+        <div class="wizard-result">Detección de anticuerpos VIH-1 y VIH-2 confirmada[span_45](start_span)[span_45](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+
+    <!-- Paso 3 -->
+    <div id="wiz-step-3" class="wizard-step">
+        <h3>Prueba de ácido nucleico (VIH-1 NAT)[span_46](start_span)[span_46](end_span)</h3>
+        <p>Al obtener resultados indeterminados, se realiza el ensayo NAT. ¿Cuál es el resultado?</p>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-nat-pos')">VIH-1 NAT (+)</button>
+        <button class="wizard-btn" onclick="nextWizard('wiz-res-nat-neg')">VIH-1 NAT (-)</button>
+    </div>
+
+    <!-- Resultados NAT -->
+    <div id="wiz-res-nat-pos" class="wizard-step">
+        <div class="wizard-result" style="background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;">Diagnóstico: Infección VIH-1 aguda[span_47](start_span)[span_47](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+    <div id="wiz-res-nat-neg" class="wizard-step">
+        <div class="wizard-result">Diagnóstico: Negativo para VIH-1[span_48](start_span)[span_48](end_span).</div>
+        <button class="wizard-reset" onclick="nextWizard('wiz-step-1')">Reiniciar Algoritmo</button>
+    </div>
+</div>
+
+<!-- TARGA -->
+<div id="tab-targa" class="tab-content">
+    <h2>Tratamiento Antirretroviral (TARGA)</h2>
+    <div class="card">
+        <h3>Inicio del Tratamiento</h3>
+        <p>El tratamiento debe instituirse lo más temprano posible una vez comprobada la infección, independientemente de la carga viral o la cantidad de linfocitos CD4+[span_49](start_span)[span_49](end_span)[span_50](start_span)[span_50](end_span). El objetivo primario es una supresión viral máxima: se espera que la carga viral baje más del 90% (un logaritmo base 10) tras los primeros 3 a 6 meses[span_51](start_span)[span_51](end_span).</p>
+    </div>
+    <div class="card">
+        <h3>Regímenes de Primera Línea</h3>
+        <p>El régimen preferencial suele incluir <strong>1 Inhibidor de Proteasa (IP) o 1 Inhibidor No Análogo (ITINN)</strong> combinado con <strong>2 Inhibidores de la Transcriptasa Inversa Análogos de Nucleósidos (ITIANs)</strong>[span_52](start_span)[span_52](end_span)[span_53](start_span)[span_53](end_span). Los ITIANs, como la Zidovudina o Lamivudina, requieren pasar por tres fosforilaciones intracelulares para poder inhibir la síntesis de la cadena de ADN proviral[span_54](start_span)[span_54](end_span).</p>
+    </div>
+    <div class="card">
+        <h3>Profilaxis de Infecciones Oportunistas</h3>
+        <p>Cuando los linfocitos CD4+ del paciente descienden por debajo de 200 células/µL, es mandatorio iniciar profilaxis primaria. Para prevenir <em>Pneumocystis jirovecii</em> y <em>Toxoplasma gondii</em>, el fármaco de elección es Trimetoprima-Sulfametoxazol (TMP-SMZ)[span_55](start_span)[span_55](end_span)[span_56](start_span)[span_56](end_span).</p>
+    </div>
+</div>
+
+<!-- CASOS CLINICOS -->
+<div id="tab-casos" class="tab-content">
+    <h2>Integración Clínica: Cuestionarios</h2>
+    <p>Aplica tus conocimientos mediante la evaluación de estos escenarios clínicos.</p>
+
+    <div class="card">
+        <h3>Caso 1: Paciente en Urgencias</h3>
+        <p>Hombre de 21 años acude por fiebre, astenia, linfadenopatía cervical bilateral y exantema maculopapular. Refiere práctica sexual de riesgo hace 3 semanas.</p>
+        
+        <!-- P1 -->
+        <div class="quiz-question">
+            <p><strong>1. ¿Qué proteína de la envoltura viral es crucial para la unión al receptor CD4 en los linfocitos T de este paciente?</strong></p>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb1', 'Incorrecto. La p24 es una proteína de la cápside, no de la envoltura[span_57](start_span)[span_57](end_span).')">A) p24</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, true, 'fb1', '¡Correcto! La gp120 es la glucoproteína de superficie que sirve como puente de unión específico al CD4+[span_58](start_span)[span_58](end_span)[span_59](start_span)[span_59](end_span).')">B) gp120</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb1', 'Incorrecto. La integrasa se encarga de integrar el ADN viral al genoma del huésped[span_60](start_span)[span_60](end_span).')">C) Integrasa</button>
+            <div id="fb1" class="quiz-feedback"></div>
+        </div>
+
+        <!-- P2 -->
+        <div class="quiz-question">
+            <p><strong>2. Para confirmar infección aguda en el "período de ventana", ¿qué detecta la prueba ELISA de cuarta generación además de anticuerpos?</strong></p>
+            <button class="quiz-btn" onclick="checkAnswer(this, true, 'fb2', '¡Exacto! El ELISA de cuarta generación detecta anticuerpos y el antígeno p24, acortando el período de ventana[span_61](start_span)[span_61](end_span)[span_62](start_span)[span_62](end_span)[span_63](start_span)[span_63](end_span).')">A) Antígeno p24</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb2', 'Incorrecto. La prueba que detecta ácidos nucleicos (ARN) es la NAT o PCR, no el ELISA[span_64](start_span)[span_64](end_span)[span_65](start_span)[span_65](end_span).')">B) ARN viral</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb2', 'Incorrecto. La detección de gp41 no es el diferencial de la 4ta generación[span_66](start_span)[span_66](end_span).')">C) Antígeno gp41</button>
+            <div id="fb2" class="quiz-feedback"></div>
+        </div>
+        
+        <!-- P3 -->
+        <div class="quiz-question">
+            <p><strong>3. Durante esta fase aguda, ¿dónde está ocurriendo la lisis y apoptosis masiva de las células T de memoria?</strong></p>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb3', 'Incorrecto. Aunque el bazo es un órgano linfoide, no es el sitio inicial de lisis masiva[span_67](start_span)[span_67](end_span).')">A) Bazo</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb3', 'Incorrecto. La médula ósea produce linfocitos, pero no es la zona de choque primario[span_68](start_span)[span_68](end_span).')">B) Médula ósea</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, true, 'fb3', '¡Correcto! En las primeras semanas se destruye hasta un 60% de las células T de memoria del GALT (tejido linfoide asociado a mucosas gastrointestinales)[span_69](start_span)[span_69](end_span).')">C) GALT</button>
+            <div id="fb3" class="quiz-feedback"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Caso 2: Paciente con Inmunosupresión Profunda</h3>
+        <p>Hombre de 35 años, diagnóstico previo de VIH sin seguimiento. Ingresa por disnea y tos. Laboratorios: CD4 de 80 cél/µL.</p>
+        
+        <!-- P4 -->
+        <div class="quiz-question">
+            <p><strong>4. ¿A qué categoría clínica corresponde su estado laboratorial actual?</strong></p>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb4', 'Incorrecto. Un conteo de 80 cel/µL indica inmunosupresión severa[span_70](start_span)[span_70](end_span).')">A) Categoría A2 (CD4 200-499)</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, true, 'fb4', '¡Correcto! La categoría 3 (Sida) se establece con conteos menores a 200 linfocitos T CD4+/µL[span_71](start_span)[span_71](end_span)[span_72](start_span)[span_72](end_span).')">B) Categoría C3 / Sida (<200 cél/µL)</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb4', 'Incorrecto. Los niveles de CD8 no dictan esta categoría[span_73](start_span)[span_73](end_span).')">C) Categoría basada en CD8</button>
+            <div id="fb4" class="quiz-feedback"></div>
+        </div>
+
+        <!-- P5 -->
+        <div class="quiz-question">
+            <p><strong>5. Se inicia TARGA (AZT + 3TC + Efavirenz). A las 3 semanas presenta fiebre alta y exacerbación inflamatoria de una infección por citomegalovirus subyacente. ¿Cuál es la causa inmunológica?</strong></p>
+            <button class="quiz-btn" onclick="checkAnswer(this, true, 'fb5', '¡Correcto! La rápida recuperación inmunológica por el TARGA causa una respuesta hiperinflamatoria contra patógenos latentes, conocida como Síndrome de Reconstitución Inmunológica (SRI)[span_74](start_span)[span_74](end_span)[span_75](start_span)[span_75](end_span).')">A) Síndrome de Reconstitución Inmunológica (SRI)</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb5', 'Incorrecto. La resistencia causaría falla virológica y disminución de CD4, no una exacerbación inflamatoria brusca[span_76](start_span)[span_76](end_span).')">B) Falla virológica por resistencia</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false, 'fb5', 'Incorrecto. La acidosis láctica es un evento tóxico por ITIANs (toxicidad mitocondrial), no se manifiesta como exacerbación de citomegalovirus[span_77](start_span)[span_77](end_span).')">C) Toxicidad mitocondrial (Acidosis láctica)</button>
+            <div id="fb5" class="quiz-feedback"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tab Navigation Logic
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Accordion Logic
+    var acc = document.getElementsByClassName("accordion-btn");
+    for (var i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active-acc");
+            var span = this.querySelector("span");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+                span.innerText = "+";
+            } else {
+                panel.style.display = "block";
+                span.innerText = "-";
+            }
+        });
+    }
+
+    // Wizard Logic
+    function nextWizard(stepId) {
+        var steps = document.getElementsByClassName("wizard-step");
+        for (var i = 0; i < steps.length; i++) {
+            steps[i].classList.remove("active-step");
+        }
+        document.getElementById(stepId).classList.add("active-step");
+    }
+
+    // Quiz Logic
+    function checkAnswer(btn, isCorrect, feedbackId, feedbackText) {
+        // Disable all buttons in this question
+        var parentDiv = btn.parentElement;
+        var buttons = parentDiv.getElementsByClassName("quiz-btn");
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
+
+        var feedbackDiv = document.getElementById(feedbackId);
+        feedbackDiv.innerText = feedbackText;
+        feedbackDiv.classList.add("show");
+
+        if(isCorrect) {
+            btn.classList.add("correct");
+            feedbackDiv.classList.add("feedback-correct");
+            feedbackDiv.classList.remove("feedback-incorrect");
+        } else {
+            btn.classList.add("incorrect");
+            feedbackDiv.classList.add("feedback-incorrect");
+            feedbackDiv.classList.remove("feedback-correct");
+        }
+    }
+</script>
+
+</body>
+</html>
